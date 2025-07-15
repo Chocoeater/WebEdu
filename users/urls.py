@@ -1,0 +1,12 @@
+from django.urls import path
+
+from users import views
+from users.apps import UsersConfig
+
+app_name = UsersConfig.name
+
+urlpatterns = [
+    path('user/<int:pk>/update/', views.UserUpdateAPIView.as_view(), name='user_update'),
+    path('user/create/', views.UserCreateAPIView.as_view(), name='user_create'),
+    path('user/<int:pk>/', views.UserRetrieveAPIView.as_view(), name='user'),
+]
