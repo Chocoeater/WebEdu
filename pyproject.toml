@@ -14,6 +14,8 @@ djangorestframework = "^3.16.0"
 dotenv = "^0.9.9"
 django-phonenumber-field = {extras = ["phonenumberslite"], version = "^8.1.0"}
 django-filter = "^25.1"
+requests = "^2.32.4"
+djangorestframework-simplejwt = "^5.5.0"
 
 
 [build-system]
