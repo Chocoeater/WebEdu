@@ -1,16 +1,25 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.models import User, Payment
-from users.serializers import UserSerializer, PaymentSerializer, MyTokenObtainPairSerializer, UserCreateSerializer
+from users.serializers import UserSerializer, PaymentSerializer, MyTokenObtainPairSerializer, UserCreateSerializer, \
+    PublicUserSerializer
 
 
 class UserUpdateAPIView(generics.UpdateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
+
+    def get_object(self):
+        obj = super().get_object()
+        user = self.request.user
+        if user.id == obj.id or user.is_staff:
+            return obj
+        raise PermissionDenied('Доступ закрыт')
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -24,13 +33,24 @@ class UserCreateAPIView(generics.CreateAPIView):
 
 
 class UserRetrieveAPIView(generics.RetrieveAPIView):
-    serializer_class = UserSerializer
     queryset = User.objects.all()
+
+    def get_serializer_class(self):
+        obj = self.get_object()
+        user = self.request.user
+        if user.id == obj.id or user.is_staff:
+            return UserSerializer
+        return PublicUserSerializer
 
 
 class UserListAPIView(generics.ListAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+
+    def get_serializer_class(self):
+        user = self.request.user
+        if user.is_staff:
+            return UserSerializer
+        return PublicUserSerializer
 
 
 class UserDestroyAPIView(generics.DestroyAPIView):

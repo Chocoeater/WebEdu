@@ -15,7 +15,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'avatar', 'phone', 'country', 'history_of_payments']
+        fields = ['email', 'first_name', 'last_name', 'avatar', 'phone', 'country', 'history_of_payments']
+
+
+class PublicUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'first_name', 'avatar', 'country']
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
