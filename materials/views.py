@@ -2,15 +2,22 @@ from rest_framework import viewsets, generics
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAdminUser
 
+from materials.mixins import GetQuerysetMixin
 from materials.models import Course, Lesson
 from materials.serializers import CourseSerializer, LessonSerializer, CourseRetrieveSerializer
-from users.permissions import ModeratorAndAdminPermission
+from users.permissions import IsModer, IsOwner
 
 
 # Create your views here.
 
 class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.all()
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_staff or user.groups.filter(name='moders').exists():
+            return Course.objects.all()
+        return Course.objects.filter(owner=user)
+
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -18,36 +25,37 @@ class CourseViewSet(viewsets.ModelViewSet):
         return CourseSerializer
 
     def get_permissions(self):
-        if self.action in ['create', 'destroy']:
-            self.permission_classes = [IsAdminUser]
-        else:
-            self.permission_classes = [ModeratorAndAdminPermission]
+        if self.action == 'create':
+            self.permission_classes = [~IsModer]
+        elif self.action == 'destroy':
+            self.permission_classes = [~IsModer | IsAdminUser]
+        elif self.action in ['retrieve', 'update']:
+            self.permission_classes = [IsModer | IsAdminUser]
         return [permissions() for permissions in self.permission_classes]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class LessonCreateAPEView(generics.CreateAPIView):
     serializer_class = LessonSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [~IsModer]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
-class LessonListAPIView(generics.ListAPIView):
+class LessonListAPIView(GetQuerysetMixin, generics.ListAPIView):
     serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
-    permission_classes = [ModeratorAndAdminPermission]
 
 
-class LessonRetrieveAPIView(generics.RetrieveAPIView):
+class LessonRetrieveAPIView(GetQuerysetMixin, generics.RetrieveAPIView):
     serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
-    permission_classes = [ModeratorAndAdminPermission]
 
 
-class LessonUpdateAPIView(generics.UpdateAPIView):
+class LessonUpdateAPIView(GetQuerysetMixin, generics.UpdateAPIView):
     serializer_class = LessonSerializer
-    queryset = Lesson.objects.all()
-    permission_classes = [ModeratorAndAdminPermission]
 
 
-class LessonDestroyAPIView(generics.DestroyAPIView):
-    queryset = Lesson.objects.all()
-    permission_classes = [IsAdminUser]
+class LessonDestroyAPIView(GetQuerysetMixin, generics.DestroyAPIView):
+    permission_classes = [~IsModer | IsAdminUser]

@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
-from materials.models import Course, Lesson
+
 
 
 # Create your models here.
@@ -50,8 +50,9 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
-
+from materials.models import Course, Lesson
 class Payment(models.Model):
+
     """
         Модель платежа пользователя
 
