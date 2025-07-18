@@ -6,8 +6,13 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from users.models import User, Payment
-from users.serializers import UserSerializer, PaymentSerializer, MyTokenObtainPairSerializer, UserCreateSerializer, \
-    PublicUserSerializer
+from users.serializers import (
+    UserSerializer,
+    PaymentSerializer,
+    MyTokenObtainPairSerializer,
+    UserCreateSerializer,
+    PublicUserSerializer,
+)
 
 
 class UserUpdateAPIView(generics.UpdateAPIView):
@@ -19,7 +24,7 @@ class UserUpdateAPIView(generics.UpdateAPIView):
         user = self.request.user
         if user.id == obj.id or user.is_staff:
             return obj
-        raise PermissionDenied('Доступ закрыт')
+        raise PermissionDenied("Доступ закрыт")
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -66,8 +71,10 @@ class PaymentListAPIView(generics.ListAPIView):
     serializer_class = PaymentSerializer
     queryset = Payment.objects.all()
     filter_backends = [OrderingFilter, DjangoFilterBackend]
-    filterset_fields = ['paid_course', 'paid_lesson', 'payment_method']
-    ordering_fields = ['date_of_pay', ]
+    filterset_fields = ["paid_course", "paid_lesson", "payment_method"]
+    ordering_fields = [
+        "date_of_pay",
+    ]
 
 
 class MyTokenObtainPairView(TokenObtainPairView):

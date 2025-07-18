@@ -1,35 +1,34 @@
 from rest_framework import viewsets, generics
-from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAdminUser
 
 from materials.mixins import GetQuerysetMixin
-from materials.models import Course, Lesson
+from materials.models import Course
 from materials.serializers import CourseSerializer, LessonSerializer, CourseRetrieveSerializer
-from users.permissions import IsModer, IsOwner
+from users.permissions import IsModer
 
 
 # Create your views here.
+
 
 class CourseViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_staff or user.groups.filter(name='moders').exists():
+        if user.is_staff or user.groups.filter(name="moders").exists():
             return Course.objects.all()
         return Course.objects.filter(owner=user)
 
-
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action == "retrieve":
             return CourseRetrieveSerializer
         return CourseSerializer
 
     def get_permissions(self):
-        if self.action == 'create':
+        if self.action == "create":
             self.permission_classes = [~IsModer]
-        elif self.action == 'destroy':
+        elif self.action == "destroy":
             self.permission_classes = [~IsModer | IsAdminUser]
-        elif self.action in ['retrieve', 'update']:
+        elif self.action in ["retrieve", "update"]:
             self.permission_classes = [IsModer | IsAdminUser]
         return [permissions() for permissions in self.permission_classes]
 
