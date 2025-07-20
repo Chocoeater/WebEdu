@@ -44,18 +44,18 @@ class LessonListAPIView(GetQuerysetMixin, generics.ListAPIView):
     serializer_class = LessonSerializer
 
 
-class LessonRetrieveAPIView(GetQuerysetMixin, generics.RetrieveAPIView):
+class LessonRetrieveAPIView(generics.RetrieveAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsOwner | IsAdminUser]
 
 
-class LessonUpdateAPIView(GetQuerysetMixin, generics.UpdateAPIView):
+class LessonUpdateAPIView(generics.UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = [IsOwner | IsAdminUser]
 
 
-class LessonDestroyAPIView(GetQuerysetMixin, generics.DestroyAPIView):
+class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
     permission_classes = [~IsModer | IsAdminUser | IsOwner]
