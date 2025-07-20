@@ -1,0 +1,84 @@
+[
+{
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$KUG5qmlgELvTMKqfUwxjdS$OdGSHsiN6oO552TxL4UY2OYiiasYsJVoS+liSi+4+is=",
+        "last_login": "2025-07-09T18:52:41.113Z",
+        "is_superuser": true,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-07-09T18:52:26.776Z",
+        "email": "admin@mail.ru",
+        "avatar": "",
+        "phone": null,
+        "country": "Russia",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$6EvqD7uZ74vp08RZbPyQ5b$QQnDI/Q/ZQZkacFK4vNia8wWGhXKREghp1ihsxIMA0Q=",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "anon",
+        "last_name": "anonov",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-07-16T19:26:45.177Z",
+        "email": "user@mail.ru",
+        "avatar": "",
+        "phone": null,
+        "country": "Russia",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.user",
+    "pk": 4,
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$JZx5ibuMJnYO1j3VFrtcYC$0YWvzokhL3tV63QAddS+mh6BIodpUqOe9HN9uhMU58s=",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-07-17T19:28:28Z",
+        "email": "moder@mail.ru",
+        "avatar": "",
+        "phone": null,
+        "country": "Russia",
+        "groups": [
+            1
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.user",
+    "pk": 5,
+    "fields": {
+        "password": "pbkdf2_sha256$1000000$lf8Q1bAugLByMiVcR0Mjh0$j/j0QIfyJuhqMidfEz0d4waWBv0A9YH/grLjbsFCDic=",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-07-18T20:13:22.186Z",
+        "email": "user2@mail.ru",
+        "avatar": "",
+        "phone": null,
+        "country": "Russia",
+        "groups": [],
+        "user_permissions": []
+    }
+}
+]

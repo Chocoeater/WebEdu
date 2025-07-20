@@ -1,38 +1,61 @@
 from rest_framework import viewsets, generics
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
+from materials.mixins import GetQuerysetMixin
 from materials.models import Course, Lesson
 from materials.serializers import CourseSerializer, LessonSerializer, CourseRetrieveSerializer
+from users.permissions import IsModer, IsOwner
 
 
 # Create your views here.
 
-class CourseViewSet(viewsets.ModelViewSet):
+
+class CourseViewSet(GetQuerysetMixin, viewsets.ModelViewSet):
     queryset = Course.objects.all()
 
     def get_serializer_class(self):
-        if self.action == 'retrieve':
+        if self.action == "retrieve":
             return CourseRetrieveSerializer
         return CourseSerializer
+
+    def get_permissions(self):
+        if self.action == "create":
+            self.permission_classes = [IsAuthenticated, ~IsModer]
+        elif self.action == "destroy":
+            self.permission_classes = [IsAuthenticated, ~IsModer | IsOwner]
+        elif self.action in ["retrieve", "update"]:
+            self.permission_classes = [IsAuthenticated, IsModer | IsOwner]
+        return [permissions() for permissions in self.permission_classes]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class LessonCreateAPEView(generics.CreateAPIView):
     serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated, ~IsModer]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
-class LessonListAPIView(generics.ListAPIView):
-    serializer_class = LessonSerializer
+class LessonListAPIView(GetQuerysetMixin, generics.ListAPIView):
     queryset = Lesson.objects.all()
+    serializer_class = LessonSerializer
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
-    serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    serializer_class = LessonSerializer
+    permission_classes = [IsOwner]
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
-    serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated, IsOwner]
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
+    permission_classes = [IsAuthenticated, ~IsModer | IsOwner]

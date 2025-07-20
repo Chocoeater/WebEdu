@@ -5,7 +5,18 @@
     "fields": {
         "name": "Базовый курс по основам программирования Python",
         "preview": "",
-        "description": "Начало, так сказать"
+        "description": "Начало, так сказать",
+        "owner": null
+    }
+},
+{
+    "model": "materials.course",
+    "pk": 3,
+    "fields": {
+        "name": "Мой курс",
+        "preview": "",
+        "description": "Сам решу-у-у-у",
+        "owner": 3
     }
 }
 ]

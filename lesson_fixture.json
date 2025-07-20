@@ -7,7 +7,8 @@
         "preview": "",
         "description": "Рассматриваем необходимое программное обеспечение для дальнейшей работы с кодом",
         "link": null,
-        "course": 2
+        "course": 2,
+        "owner": null
     }
 },
 {
@@ -16,9 +17,22 @@
     "fields": {
         "name": "Подбираем среду разработки (IDE)",
         "preview": "",
-        "description": "Выбираем среду разработки и разбираемся в интерфейсе и пишем первый скрипт в нем",
+        "description": "Я сам решу-у-у-у-у",
         "link": null,
-        "course": 2
+        "course": 2,
+        "owner": null
+    }
+},
+{
+    "model": "materials.lesson",
+    "pk": 4,
+    "fields": {
+        "name": "Еще не решил",
+        "preview": "",
+        "description": "Я сам решу-у-у-у-у",
+        "link": null,
+        "course": 3,
+        "owner": 3
     }
 }
 ]
