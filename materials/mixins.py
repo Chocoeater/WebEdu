@@ -9,7 +9,8 @@ class GetQuerysetMixin:
     """
 
     def get_queryset(self):
+        qrst = super().get_queryset()
         user = self.request.user
         if user.is_staff or user.groups.filter(name="moders").exists():
-            return Lesson.objects.all()
-        return Lesson.objects.filter(owner=user)
+            return qrst
+        return qrst.filter(owner=user)
