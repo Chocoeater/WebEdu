@@ -1,5 +1,5 @@
 from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 from materials.mixins import GetQuerysetMixin
 from materials.models import Course, Lesson
@@ -20,11 +20,11 @@ class CourseViewSet(GetQuerysetMixin, viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == "create":
-            self.permission_classes = [~IsModer]
+            self.permission_classes = [IsAuthenticated, ~IsModer]
         elif self.action == "destroy":
-            self.permission_classes = [~IsModer | IsAdminUser | IsOwner]
+            self.permission_classes = [IsAuthenticated, ~IsModer | IsOwner]
         elif self.action in ["retrieve", "update"]:
-            self.permission_classes = [IsModer | IsAdminUser | IsOwner]
+            self.permission_classes = [IsAuthenticated, IsModer | IsOwner]
         return [permissions() for permissions in self.permission_classes]
 
     def perform_create(self, serializer):
@@ -33,7 +33,7 @@ class CourseViewSet(GetQuerysetMixin, viewsets.ModelViewSet):
 
 class LessonCreateAPEView(generics.CreateAPIView):
     serializer_class = LessonSerializer
-    permission_classes = [~IsModer]
+    permission_classes = [IsAuthenticated, ~IsModer]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -47,15 +47,15 @@ class LessonListAPIView(GetQuerysetMixin, generics.ListAPIView):
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsOwner | IsAdminUser]
+    permission_classes = [IsOwner]
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsOwner | IsAdminUser]
+    permission_classes = [IsAuthenticated, IsOwner]
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
-    permission_classes = [~IsModer | IsAdminUser | IsOwner]
+    permission_classes = [IsAuthenticated, ~IsModer | IsOwner]
