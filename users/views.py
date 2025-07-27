@@ -1,4 +1,7 @@
+from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import OrderingFilter
@@ -36,9 +39,12 @@ class UserCreateAPIView(generics.CreateAPIView):
         user.set_password(user.password)
         user.save()
 
-
 class UserRetrieveAPIView(generics.RetrieveAPIView):
     queryset = User.objects.all()
+
+    @swagger_auto_schema(operation_description="Возвращается полный профиль для админов и владельцев. Для остальных только публичные данные профиля.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     def get_serializer_class(self):
         obj = self.get_object()
@@ -50,6 +56,11 @@ class UserRetrieveAPIView(generics.RetrieveAPIView):
 
 class UserListAPIView(generics.ListAPIView):
     queryset = User.objects.all()
+
+    @swagger_auto_schema(
+        operation_description="Возвращается полный профиль для админов и владельцев. Для остальных только публичные данные профиля.")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     def get_serializer_class(self):
         user = self.request.user

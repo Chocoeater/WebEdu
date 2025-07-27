@@ -57,7 +57,7 @@ class Lesson(models.Model):
         null=True,
         blank=True,
         verbose_name="Ссылка на видео",
-        help_text="Вставьте ссылку на видео-урок",
+        help_text="Ссылка на видео исключительно на youtube, проходит валидация",
     )
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="lessons", verbose_name="Курс")
     owner = models.ForeignKey(
