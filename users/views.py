@@ -1,3 +1,5 @@
+from itertools import product
+
 from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg import openapi
@@ -16,6 +18,7 @@ from users.serializers import (
     UserCreateSerializer,
     PublicUserSerializer,
 )
+from users.services import convert_rub_to_usd, create_stripe_price, create_stripe_session, create_stripe_product
 
 
 class UserUpdateAPIView(generics.UpdateAPIView):
@@ -77,6 +80,29 @@ class UserDestroyAPIView(generics.DestroyAPIView):
 class PaymentCreateAPIView(generics.CreateAPIView):
     serializer_class = PaymentSerializer
 
+    def perform_create(self, serializer):
+
+        payment = serializer.save(user=self.request.user)
+
+        if payment.paid_course:
+            product_name = f'Курс: {payment.paid_course.name}'
+        elif payment.paid_lesson:
+            product_name = f'Урок: {payment.paid_lesson.name}'
+        else:
+            product_name = "Платеж"
+
+
+        amount_in_dollar = convert_rub_to_usd(payment.payment_amount)
+
+        product = create_stripe_product(product_name)
+        price = create_stripe_price(amount_in_dollar, product.id)
+
+        session_id, payment_link = create_stripe_session(price.id)
+
+        payment.session_id = session_id
+        payment.link_for_pay = payment_link
+        payment.save()
+
 
 class PaymentListAPIView(generics.ListAPIView):
     serializer_class = PaymentSerializer
@@ -91,3 +117,4 @@ class PaymentListAPIView(generics.ListAPIView):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
     permission_classes = [AllowAny]
+

@@ -9,7 +9,9 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = "__all__"
-
+        extra_kwargs = {
+            'user': {'read_only': True}
+        }
 
 class UserSerializer(serializers.ModelSerializer):
     history_of_payments = PaymentSerializer(many=True, read_only=True, source="payments")
