@@ -19,6 +19,7 @@ djangorestframework-simplejwt = "^5.5.0"
 black = "^25.1.0"
 ipython = "^9.4.0"
 flake8 = "^7.3.0"
+coverage = "^7.10.0"
 
 
 [build-system]
