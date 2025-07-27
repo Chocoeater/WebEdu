@@ -1,8 +1,6 @@
-from itertools import product
 
-from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_yasg import openapi
+
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
@@ -42,10 +40,14 @@ class UserCreateAPIView(generics.CreateAPIView):
         user.set_password(user.password)
         user.save()
 
+
 class UserRetrieveAPIView(generics.RetrieveAPIView):
     queryset = User.objects.all()
 
-    @swagger_auto_schema(operation_description="Возвращается полный профиль для админов и владельцев. Для остальных только публичные данные профиля.")
+    @swagger_auto_schema(
+        operation_description="Возвращается полный профиль для админов и владельцев. "
+                              "Для остальных только публичные данные профиля."
+    )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
@@ -61,7 +63,9 @@ class UserListAPIView(generics.ListAPIView):
     queryset = User.objects.all()
 
     @swagger_auto_schema(
-        operation_description="Возвращается полный профиль для админов и владельцев. Для остальных только публичные данные профиля.")
+        operation_description="Возвращается полный профиль для админов и владельцев. "
+                              "Для остальных только публичные данные профиля."
+    )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
@@ -85,12 +89,11 @@ class PaymentCreateAPIView(generics.CreateAPIView):
         payment = serializer.save(user=self.request.user)
 
         if payment.paid_course:
-            product_name = f'Курс: {payment.paid_course.name}'
+            product_name = f"Курс: {payment.paid_course.name}"
         elif payment.paid_lesson:
-            product_name = f'Урок: {payment.paid_lesson.name}'
+            product_name = f"Урок: {payment.paid_lesson.name}"
         else:
             product_name = "Платеж"
-
 
         amount_in_dollar = convert_rub_to_usd(payment.payment_amount)
 
@@ -117,4 +120,3 @@ class PaymentListAPIView(generics.ListAPIView):
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
     permission_classes = [AllowAny]
-

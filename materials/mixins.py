@@ -1,7 +1,5 @@
 from rest_framework import generics
 
-from materials.models import Lesson
-
 
 class GetQuerysetMixin:
     """
@@ -11,7 +9,7 @@ class GetQuerysetMixin:
     """
 
     def is_list(self):
-        if getattr(self, 'action', None) == 'list':
+        if getattr(self, "action", None) == "list":
             return True
         return isinstance(self, generics.ListAPIView)
 

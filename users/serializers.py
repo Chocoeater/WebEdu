@@ -9,9 +9,8 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = "__all__"
-        extra_kwargs = {
-            'user': {'read_only': True}
-        }
+        extra_kwargs = {"user": {"read_only": True}}
+
 
 class UserSerializer(serializers.ModelSerializer):
     history_of_payments = PaymentSerializer(many=True, read_only=True, source="payments")
@@ -19,7 +18,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["email", "first_name", "last_name", "avatar", "phone", "country", "history_of_payments"]
-
 
 
 class PublicUserSerializer(serializers.ModelSerializer):
@@ -34,7 +32,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "email", "password", "country"]
-        extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {"password": {"write_only": True}}
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

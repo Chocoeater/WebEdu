@@ -69,20 +69,14 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, ~IsModer | IsOwner]
 
 
-
-
 class SubscriptionAPIView(APIView):
     @swagger_auto_schema(
         operation_description="Добавление/удаление подписки на обновления курса",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
-            required=['id'],
+            required=["id"],
             properties={
-                'id': openapi.Schema(
-                    type=openapi.TYPE_INTEGER,
-                    description="ID курса для подписки",
-                    example=1
-                ),
+                "id": openapi.Schema(type=openapi.TYPE_INTEGER, description="ID курса для подписки", example=1),
             },
         ),
         responses={
@@ -91,27 +85,17 @@ class SubscriptionAPIView(APIView):
                 schema=openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
-                        'message': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            example="Подписка добавлена"
-                        ),
+                        "message": openapi.Schema(type=openapi.TYPE_STRING, example="Подписка добавлена"),
                     },
                 ),
-                examples={
-                    "application/json": {
-                        "message": "Подписка добавлена"
-                    }
-                }
+                examples={"application/json": {"message": "Подписка добавлена"}},
             ),
             400: openapi.Response(
                 description="Ошибка валидации",
                 schema=openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
-                        'error': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            example="Course ID is required"
-                        ),
+                        "error": openapi.Schema(type=openapi.TYPE_STRING, example="Course ID is required"),
                     },
                 ),
             ),
@@ -120,29 +104,26 @@ class SubscriptionAPIView(APIView):
                 schema=openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            example="Not found."
-                        ),
+                        "detail": openapi.Schema(type=openapi.TYPE_STRING, example="Not found."),
                     },
                 ),
             ),
-        }
+        },
     )
     def post(self, *args, **kwargs):
         user = self.request.user
-        course_id = self.request.data.get('id')
+        course_id = self.request.data.get("id")
         course_item = get_object_or_404(Course, id=course_id)
         subscribed = Subscription.objects.filter(user=user, course=course_item).exists()
 
         if not course_id:
-            return Response({'error': 'Course ID is required'}, status=400)
+            return Response({"error": "Course ID is required"}, status=400)
 
         if subscribed:
             Subscription.objects.filter(user=user, course=course_item).delete()
-            message = 'Подписка удалена'
+            message = "Подписка удалена"
         else:
             Subscription.objects.create(user=user, course=course_item)
-            message = 'Подписка добавлена'
+            message = "Подписка добавлена"
 
-        return Response({'message': message})
+        return Response({"message": message})
