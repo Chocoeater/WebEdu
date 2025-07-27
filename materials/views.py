@@ -1,11 +1,12 @@
 from rest_framework import viewsets, generics
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from materials.mixins import GetQuerysetMixin
 from materials.models import Course, Lesson, Subscription
+from materials.paginators import MyPaginator
 from materials.serializers import CourseSerializer, LessonSerializer, CourseRetrieveSerializer
 from users.permissions import IsModer, IsOwner
 
@@ -15,6 +16,7 @@ from users.permissions import IsModer, IsOwner
 
 class CourseViewSet(GetQuerysetMixin, viewsets.ModelViewSet):
     queryset = Course.objects.all()
+    pagination_class = MyPaginator
 
     def get_serializer_class(self):
         if self.action == "retrieve":
@@ -45,6 +47,7 @@ class LessonCreateAPEView(generics.CreateAPIView):
 class LessonListAPIView(GetQuerysetMixin, generics.ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    pagination_class = MyPaginator
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
