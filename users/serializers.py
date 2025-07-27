@@ -19,6 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["email", "first_name", "last_name", "avatar", "phone", "country", "history_of_payments"]
 
 
+
 class PublicUserSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -30,7 +31,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = "__all__"
+        fields = ["id", "email", "password", "country"]
+        extra_kwargs = {'password': {'write_only': True}}
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
