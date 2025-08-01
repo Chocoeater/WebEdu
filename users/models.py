@@ -15,6 +15,7 @@ class User(AbstractUser):
         avatar (Image): Аватар пользователя.
         phone (int): Номер мобильного телефона.
         country (str): Название страны.
+        last_login (str): Время последнего входа.
     """
 
     username = None
@@ -36,6 +37,11 @@ class User(AbstractUser):
         max_length=40,
         verbose_name="Страна",
         help_text="Введите название страны, в которой вы находитесь",
+    )
+
+    last_login = models.DateTimeField(
+        auto_now=True,
+        verbose_name='Дата и время последнего входа'
     )
 
     USERNAME_FIELD = "email"
@@ -63,6 +69,8 @@ class Payment(models.Model):
         paid_lesson (Lesson): Ссылка на оплаченный урок.
         payment_amount (int): Сумма платежа.
         payment_method (str): Способ оплаты (наличными/перевод на счет)
+        link_for_pay (str): Ссылка на оплату.
+        session_id (str): Идентификатор платежной сессии.
     """
 
     PAYMENT_METHOD_CHOICES = [("cash", "Наличными"), ("transfer", "Перевод на счет")]
