@@ -10,7 +10,7 @@ from materials.mixins import GetQuerysetMixin
 from materials.models import Course, Lesson, Subscription
 from materials.paginators import MyPaginator
 from materials.serializers import CourseSerializer, LessonSerializer, CourseRetrieveSerializer
-from materials.tasks import send_about_sub
+from materials.tasks import send_about_sub, send_update_sub
 from users.permissions import IsModer, IsOwner
 
 
@@ -37,6 +37,19 @@ class CourseViewSet(GetQuerysetMixin, viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+
+        course = self.get_object()
+        subs = Subscription.objects.filter(course=course)
+        user_email_list = [sub.user.email for sub in subs]
+
+        if user_email_list:
+            send_update_sub.delay(user_email_list, course.name)
+
+        return response
+
 
 
 class LessonCreateAPEView(generics.CreateAPIView):
@@ -123,10 +136,10 @@ class SubscriptionAPIView(APIView):
         if subscribed:
             Subscription.objects.filter(user=user, course=course_item).delete()
             message = "Подписка удалена"
-            send_about_sub.delay(message, user)
+            send_about_sub.delay(message, user.email)
         else:
             Subscription.objects.create(user=user, course=course_item)
             message = "Подписка добавлена"
-            send_about_sub.delay(message, user)
+            send_about_sub.delay(message, user.email)
 
         return Response({"message": message})
