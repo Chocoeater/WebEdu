@@ -9,6 +9,7 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = "__all__"
+        extra_kwargs = {"user": {"read_only": True}}
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -30,7 +31,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = "__all__"
+        fields = ["id", "email", "password", "country"]
+        extra_kwargs = {"password": {"write_only": True}}
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

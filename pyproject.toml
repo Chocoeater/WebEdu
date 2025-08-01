@@ -20,6 +20,9 @@ black = "^25.1.0"
 ipython = "^9.4.0"
 flake8 = "^7.3.0"
 coverage = "^7.10.0"
+drf-yasg = "^1.21.10"
+stripe = "^12.3.0"
+forex-python = "^1.9.2"
 
 
 [build-system]
