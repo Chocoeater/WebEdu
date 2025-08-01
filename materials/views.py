@@ -10,6 +10,7 @@ from materials.mixins import GetQuerysetMixin
 from materials.models import Course, Lesson, Subscription
 from materials.paginators import MyPaginator
 from materials.serializers import CourseSerializer, LessonSerializer, CourseRetrieveSerializer
+from materials.tasks import send_about_sub
 from users.permissions import IsModer, IsOwner
 
 
@@ -122,8 +123,10 @@ class SubscriptionAPIView(APIView):
         if subscribed:
             Subscription.objects.filter(user=user, course=course_item).delete()
             message = "Подписка удалена"
+            send_about_sub.delay(message, user)
         else:
             Subscription.objects.create(user=user, course=course_item)
             message = "Подписка добавлена"
+            send_about_sub.delay(message, user)
 
         return Response({"message": message})
