@@ -1,3 +1,5 @@
+from typing import Any
+
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -44,3 +46,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token["email"] = user.email
 
         return token
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, str]: # После верного ввода логина и пароля, но до токена.
+        data = super().validate(attrs)
+        self.user.save() # Обновляется last_login, т.к. в модели auto_now=True
+        return data
